@@ -1,9 +1,10 @@
 // vendors
+import { useState } from 'react'
 import styled, { keyframes } from 'styled-components'
-import Iconify from '../common/Iconify'
 
 // components
 import Hamburger from './Hamburger'
+import Iconify from '../common/Iconify'
 import Logo from './Logo'
 import Overlay from '../common/Overlay'
 
@@ -22,32 +23,6 @@ const Nav = styled.nav`
 type DivProps = {
   open: boolean | null
 }
-
-const openMobile = keyframes`
-  0% {
-    transform: translateX(-100%);
-  }
-
-  100% {
-    transform: translateX(0);
-  }
-`
-
-const closeMobile = keyframes`
-  0% {
-    display: flex;
-    transform: translateX(0);
-  }
-
-  99% {
-    display: flex;
-  }
-
-  100% {
-    display: none;
-    transform: translateX(-100%)
-  }
-`
 
 const Div = styled.div<DivProps>`
   display: flex;
@@ -136,11 +111,31 @@ const Div = styled.div<DivProps>`
   }
 `
 
-type NavbarProps = {
-  isOpen: boolean | null
-  openMobileMenu: () => void
-  closeMobileMenu: () => void
-}
+const openMobile = keyframes`
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+`
+
+const closeMobile = keyframes`
+  0% {
+    display: flex;
+    transform: translateX(0);
+  }
+
+  99% {
+    display: flex;
+  }
+
+  100% {
+    display: none;
+    transform: translateX(-100%)
+  }
+`
 
 const navItems = [
   { text: 'Home', href: '/' },
@@ -150,7 +145,24 @@ const navItems = [
   { text: 'Entrar', href: '/', icon: 'ant-design:user-outlined' },
 ]
 
-function Navbar ({ isOpen, openMobileMenu, closeMobileMenu }: NavbarProps): JSX.Element {
+function Navbar (): JSX.Element {
+  const [isOpen, setIsOpen] = useState<boolean | null>(null)
+
+  function openMobileMenu () {
+    setIsOpen(true)
+
+    document.body.classList.add('disable-scroll')
+  }
+
+  function closeMobileMenu () {
+    setIsOpen(false)
+
+    // For animation
+    setTimeout(() => setIsOpen(null), 400)
+
+    document.body.classList.remove('disable-scroll')
+  }
+
   return (
     <>
       <Nav>

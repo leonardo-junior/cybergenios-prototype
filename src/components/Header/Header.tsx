@@ -12,18 +12,12 @@ const HeaderStyled = styled.header`
   }
 `
 
-type HeaderProps = {
-  isOpen: boolean | null
-  openMobileMenu: () => void
-  closeMobileMenu: () => void
-}
-
-function Header ({ isOpen, openMobileMenu, closeMobileMenu }: HeaderProps): JSX.Element {
+function Header (): JSX.Element {
   return (
     <HeaderStyled>
       <img src="/car-banner-1.png" alt="car-image" />
 
-      <Navbar isOpen={isOpen} openMobileMenu={openMobileMenu} closeMobileMenu={closeMobileMenu} />
+      <Navbar />
     </HeaderStyled>
   )
 }

@@ -2,9 +2,9 @@
 import styled from 'styled-components'
 
 // components
-import AboutButton from '../../common/AboutButton'
 import Paragraph from '../../common/Paragraph'
 import Title from '../../common/Title'
+import Button from './Button'
 
 const Section = styled.section`
   position: relative;
@@ -17,10 +17,14 @@ const Section = styled.section`
   }
 
   article {
-    background: linear-gradient( 269deg,
-      rgb(0 0 0 / 30%) 25%,15.42%,
-      rgb(14 14 14 / 31%) 50%,35.73%,
-      rgb(0 0 0 / 28%) 75%,78.67%,
+    background: linear-gradient(
+      269deg,
+      rgb(0 0 0 / 30%) 25%,
+      15.42%,
+      rgb(14 14 14 / 31%) 50%,
+      35.73%,
+      rgb(0 0 0 / 28%) 75%,
+      78.67%,
       rgb(40 40 40 / 29%) 100%
     );
     backdrop-filter: blur(1px);
@@ -70,7 +74,7 @@ function MobileAbout (): JSX.Element {
             da cidade.
           </Paragraph>
 
-          <AboutButton>Ver Carros</AboutButton>
+          <Button>Ver Carros</Button>
         </article>
       </Section>
     </>

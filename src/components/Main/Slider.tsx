@@ -1,15 +1,16 @@
 // vendors
+import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 // components
 import Button from '../common/Button'
-import Card from './Card'
 import Iconify from '../common/Iconify'
 import Paragraph from '../common/Paragraph'
 import Title from '../common/Title'
+import Card from './Card'
 
-// api
-import carList from '../../api/carList'
+// resources
+import carList from '../../utils/carList'
 
 const Ul = styled.ul`
   display: flex;
@@ -71,15 +72,95 @@ const IconButton = styled.button`
   }
 `
 
-type SliderProps = {
-  scrollRight: () => void
-  scrollLeft: () => void
-  pickPosition: number
-  sliderRef: React.RefObject<HTMLUListElement>
-  itemsMargin: number
-}
+function Slider (): JSX.Element {
+  const [itemsMargin, setItemsMargin] = useState(4)
+  const [pickPosition, setPickPosition] = useState(0)
 
-function Slider ({ scrollRight, scrollLeft, pickPosition, itemsMargin, sliderRef }: SliderProps): JSX.Element {
+  const ref = useRef<HTMLUListElement>(null)
+  const sliderItemWidthRef = useRef(0)
+  const numberOfSliderItemsRef = useRef(3)
+
+  // Syncronize item width
+  useEffect(() => {
+    if (ref.current) {
+      const carroselItem = ref.current.firstChild?.firstChild as HTMLDivElement
+
+      if (carroselItem) {
+        sliderItemWidthRef.current = carroselItem.offsetWidth
+      }
+    }
+  }, [])
+
+  function handleResizeSlider () {
+    const slider = ref.current
+
+    if (slider) {
+      const sliderWidth = slider.offsetWidth
+      const rem = 16
+
+      const minMarginAceptedBetweenItems = 3 * rem
+      const spaceBetweenItems =
+        sliderWidth - numberOfSliderItemsRef.current * Math.floor(sliderItemWidthRef.current)
+      const isPossibleAddItem =
+        minMarginAceptedBetweenItems <
+        sliderWidth - (numberOfSliderItemsRef.current + 1) * Math.floor(sliderItemWidthRef.current)
+
+      if (spaceBetweenItems < minMarginAceptedBetweenItems) {
+        numberOfSliderItemsRef.current--
+      } else if (numberOfSliderItemsRef.current < 3 && isPossibleAddItem) {
+        numberOfSliderItemsRef.current++
+      }
+
+      const widthItems = numberOfSliderItemsRef.current * Math.floor(sliderItemWidthRef.current)
+      const requiredMargin = sliderWidth - widthItems
+      const numberOfMarginsToSet = 2 * numberOfSliderItemsRef.current
+      const newMargin = requiredMargin / numberOfMarginsToSet / rem
+
+      setItemsMargin(newMargin)
+    }
+  }
+
+  useEffect(() => {
+    handleResizeSlider()
+  })
+
+  // Add item resize margin functionality when changing viewport size
+  useEffect(() => {
+    window.addEventListener('resize', handleResizeSlider)
+
+    return () => {
+      window.removeEventListener('resize', handleResizeSlider)
+    }
+  }, [])
+
+  function scrollRight () {
+    if (ref.current) {
+      const sliderWidth = ref.current?.offsetWidth
+      const sliderScrollSize = ref.current?.scrollWidth - sliderWidth
+      const sliderScrolled = ref.current?.scrollLeft + sliderWidth
+      const percentScrolled = Math.floor((sliderScrolled / sliderScrollSize) * 10) * 6.5
+      const pickPosition = percentScrolled < 65 ? percentScrolled : 65
+
+      ref.current.scrollBy({ left: sliderWidth, top: 0, behavior: 'smooth' })
+
+      setPickPosition(pickPosition)
+    }
+  }
+
+  function scrollLeft () {
+    if (ref.current) {
+      const sliderWidth = ref.current?.offsetWidth
+      const sliderScrollSize = ref.current?.scrollWidth - sliderWidth
+      const sliderScrolled = ref.current?.scrollLeft - sliderWidth
+      const percentScrolled = Math.floor((sliderScrolled / sliderScrollSize) * 10) * 6.5
+      const pickPosition = percentScrolled > 0 ? percentScrolled : 0
+
+      ref.current.scrollBy({ left: sliderWidth * -1, top: 0, behavior: 'smooth' })
+
+      setPickPosition(pickPosition)
+    }
+  }
+
   return (
     <>
       <Div>
@@ -87,8 +168,8 @@ function Slider ({ scrollRight, scrollLeft, pickPosition, itemsMargin, sliderRef
           <Iconify src="bi:chevron-left" fontSize={3} color="#AFAFAF" hoverColor="#1D2527" />
         </IconButton>
 
-        <Ul ref={sliderRef}>
-          {carList.map(({ src, name, year, velocity, economy, userRating }, index ) => {
+        <Ul ref={ref}>
+          {carList.map(({ src, name, year, velocity, economy, userRating }, index) => {
             return (
               <li key={index}>
                 <Card margin={itemsMargin}>
@@ -98,17 +179,14 @@ function Slider ({ scrollRight, scrollLeft, pickPosition, itemsMargin, sliderRef
 
                   <section>
                     <Paragraph size={'SM'}>
-                      <Iconify src="bi:calendar2-date"
-                        fontSize={1.625}
-                        bg="transparent"
-                        color="#1D2527"
-                    />
+                      <Iconify src="bi:calendar2-date" fontSize={1.625} bg="transparent" color="#1D2527" />
 
                       {year}
                     </Paragraph>
 
                     <Paragraph size={'SM'}>
-                      <Iconify src="fluent:top-speed-20-regular"
+                      <Iconify
+                        src="fluent:top-speed-20-regular"
                         fontSize={1.625}
                         bg="transparent"
                         color="#1D2527"
@@ -117,7 +195,8 @@ function Slider ({ scrollRight, scrollLeft, pickPosition, itemsMargin, sliderRef
                       {velocity}
                     </Paragraph>
                     <Paragraph size={'SM'}>
-                      <Iconify src="simple-line-icons:energy"
+                      <Iconify
+                        src="simple-line-icons:energy"
                         fontSize={1.625}
                         bg="transparent"
                         color="#1D2527"
@@ -126,7 +205,8 @@ function Slider ({ scrollRight, scrollLeft, pickPosition, itemsMargin, sliderRef
                       {economy}
                     </Paragraph>
                     <Paragraph size={'SM'}>
-                      <Iconify src="fluent:people-20-regular"
+                      <Iconify
+                        src="fluent:people-20-regular"
                         fontSize={1.625}
                         bg="transparent"
                         color="#1D2527"

@@ -2,7 +2,7 @@
 import styled from 'styled-components'
 
 // components
-import AboutButton from '../../common/AboutButton'
+import Button from './Button'
 import Paragraph from '../../common/Paragraph'
 import Title from '../../common/Title'
 
@@ -36,14 +36,14 @@ const Section = styled.section`
       min-width: 35rem;
       color: white;
       text-align: end;
-      background: linear-gradient( 
+      background: linear-gradient(
         250deg,
         rgb(50 40 40 / 60%) 0%,
-        rgba(29,37,39,0.6) 24.79%,
-        rgba(29,37,39,0.534) 54.48%,
-        rgba(29,37,39,0.006) 78.67%,
+        rgba(29, 37, 39, 0.6) 24.79%,
+        rgba(29, 37, 39, 0.534) 54.48%,
+        rgba(29, 37, 39, 0.006) 78.67%,
         rgb(96 98 98 / 0%) 80%
-     );
+      );
       backdrop-filter: blur(1px);
     }
 
@@ -96,7 +96,7 @@ function DesktopAbout (): JSX.Element {
             de ter sofrido grandes alterações ao longo dos anos é a mais antiga linha de automóveis da Ford.
           </Paragraph>
 
-          <AboutButton>Ver Carros</AboutButton>
+          <Button>Ver Carros</Button>
         </article>
       </Section>
     </>

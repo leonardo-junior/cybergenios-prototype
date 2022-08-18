@@ -1,7 +1,7 @@
 // vendors
 import styled from 'styled-components'
 
-const AboutButton = styled.button`
+const Button = styled.button`
   font-size: 1rem;
   display: flex;
   align-items: center;
@@ -13,4 +13,4 @@ const AboutButton = styled.button`
   background-color: transparent;
 `
 
-export default AboutButton
+export default Button
