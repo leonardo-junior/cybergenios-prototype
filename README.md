@@ -32,15 +32,15 @@ Para instalar todas bibliotecas e dependências necessárias.
 
 Roda localmente a aplicação em modo de desenvolvimento.
 
-É gerado um link no próprio terminal para acesso da aplicação.
-É possivel abrir no localhost:3000
+É gerado um endereço no próprio terminal para acesso da aplicação.
+É possivel também abrir no endereço http://localhost:3000
 
 Com o acesso, a página recarrega automáticamente caso efetue uma edição no código.
 É possível ver no próprio console do navegador os erros, caso ocorram.
 
 ### `yarn dev --host`
 
-É gerado além do link de desenvolvimento, um link utilizando a VPN que pode ser compartilhado caso utilizado o mesmo acesso a rede, celulares, tablets e etc.
+É gerado um endereço que pode ser acessado tanto localmente no seu computador ou em outros dispositivo que estiverem na mesma rede local da sua internet.
 
 ### `yarn preview`
 
@@ -48,5 +48,5 @@ Roda localmente a versão anterior do projeto.
 
 ### `yarn build`
 
-Prepara o projeto para ser implantado.
+Prepara o projeto para ser implantado de forma estática em produção.
 
