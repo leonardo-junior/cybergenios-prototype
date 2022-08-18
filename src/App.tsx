@@ -1,71 +1,132 @@
-function App(): JSX.Element {
+// vendors
+import { useEffect, useRef, useState } from 'react'
+
+// components
+import Header from './components/Header/Header'
+import Main from './components/Main/Main'
+// styles
+import GlobalStyle from './styles/global-style'
+
+function App (): JSX.Element {
+  const [isMenuMobileOpen, setIsMenuMobileOpen] = useState<boolean | null>(null)
+  const [sliderItemsMargin, setSliderItemsMargin] = useState(4)
+  const [sliderPickPosition, setSliderPickPosition] = useState(0)
+
+  const sliderRef = useRef<HTMLUListElement>(null)
+  const sliderItemWidthRef = useRef(0)
+  const numberOfSliderItemsRef = useRef(3)
+
+  // Syncronize item width
+  useEffect(() => {
+    if (sliderRef.current) {
+      const carroselItem = sliderRef.current.firstChild?.firstChild as HTMLDivElement
+
+      if (carroselItem) {
+        sliderItemWidthRef.current = carroselItem.offsetWidth
+      }
+    }
+  }, [])
+
+  function handleResizeSlider () {
+    const slider = sliderRef.current
+
+    if (slider) {
+      const sliderWidth = slider.offsetWidth
+      const rem = 16
+
+      const minMarginAceptedBetweenItems = 3 * rem
+      const spaceBetweenItems =
+        sliderWidth - numberOfSliderItemsRef.current * Math.floor(sliderItemWidthRef.current)
+      const isPossibleAddItem =
+        minMarginAceptedBetweenItems <
+        sliderWidth - (numberOfSliderItemsRef.current + 1) * Math.floor(sliderItemWidthRef.current)
+
+      if (spaceBetweenItems < minMarginAceptedBetweenItems) {
+        numberOfSliderItemsRef.current--
+      } else if (numberOfSliderItemsRef.current < 3 && isPossibleAddItem) {
+        numberOfSliderItemsRef.current++
+      }
+
+      const widthItems = numberOfSliderItemsRef.current * Math.floor(sliderItemWidthRef.current)
+      const requiredMargin = sliderWidth - widthItems
+      const numberOfMarginsToSet = 2 * numberOfSliderItemsRef.current
+      const newMargin = requiredMargin / numberOfMarginsToSet / rem
+
+      setSliderItemsMargin(newMargin)
+    }
+  }
+
+  useEffect(() => {
+    handleResizeSlider()
+  })
+
+  // Add item resize margin functionality when changing viewport size
+  useEffect(() => {
+    window.addEventListener('resize', handleResizeSlider)
+
+    return () => {
+      window.removeEventListener('resize', handleResizeSlider)
+    }
+  }, [])
+
+  function openMobileMenu () {
+    setIsMenuMobileOpen(true)
+
+    document.body.classList.add('disable-scroll')
+  }
+
+  function closeMobileMenu () {
+    setIsMenuMobileOpen(false)
+
+    // For animation
+    setTimeout(() => setIsMenuMobileOpen(null), 400)
+
+    document.body.classList.remove('disable-scroll')
+  }
+
+  function sliderScrollRight () {
+    if (sliderRef.current) {
+      const sliderWidth = sliderRef.current?.offsetWidth
+      const sliderScrollSize = sliderRef.current?.scrollWidth - sliderWidth
+      const sliderScrolled = sliderRef.current?.scrollLeft + sliderWidth
+      const percentScrolled = Math.floor((sliderScrolled / sliderScrollSize) * 10) * 6.5
+      const pickPosition = percentScrolled < 65 ? percentScrolled : 65
+
+      sliderRef.current.scrollBy({ left: sliderWidth, top: 0, behavior: 'smooth' })
+
+      setSliderPickPosition(pickPosition)
+    }
+  }
+
+  function sliderScrollLeft () {
+    if (sliderRef.current) {
+      const sliderWidth = sliderRef.current?.offsetWidth
+      const sliderScrollSize = sliderRef.current?.scrollWidth - sliderWidth
+      const sliderScrolled = sliderRef.current?.scrollLeft - sliderWidth
+      const percentScrolled = Math.floor((sliderScrolled / sliderScrollSize) * 10) * 6.5
+      const pickPosition = percentScrolled > 0 ? percentScrolled : 0
+
+      sliderRef.current.scrollBy({ left: sliderWidth * -1, top: 0, behavior: 'smooth' })
+
+      setSliderPickPosition(pickPosition)
+    }
+  }
 
   return (
     <>
-      <nav>
-        <img src="/favicon-32x32.png" />
+      <Header isOpen={isMenuMobileOpen} openMobileMenu={openMobileMenu} closeMobileMenu={closeMobileMenu} />
 
-        <ul>
-          <li>
-            <a href="/">Home</a>
-          </li>
+      <Main
+        scrollRight={sliderScrollRight}
+        scrollLeft={sliderScrollLeft}
+        sliderPickPosition={sliderPickPosition}
+        sliderRef={sliderRef}
+        sliderItemsMargin={sliderItemsMargin}
+      />
 
-          <li>
-            <a href="/">Fale Conosco</a>
-          </li>
-
-          <li>
-            <a href="/">Sobre</a>
-          </li>
-
-          <li>
-            <a href="/">Tabela</a>
-          </li>
-
-          <li>
-            <a href="/">Entrar</a>
-          </li>
-        </ul>
-      </nav>
-
-      <header>
-        <h1>MUSTANG</h1>
-      </header>
-
-      <main>
-        <div>
-          <ul>
-            <li>
-              <img src="/cars-showcase/car-1.png"></img>
-              <p>Car Name</p>
-              <p>Year: 2015</p>
-              <p>Velocity: 180km/hr</p>
-              <p>Potency: 9/10</p>
-              <p>User rating: 8/10</p>
-            </li>
-          </ul>
-        </div>
-
-        <article>
-          <h1>O que são</h1>
-
-          <p>
-            A sigla SUV significa Sport Utility Vehicle -- ou seja, veículo utilitário esportivo. As SUVs costumam ter porte avantajado, além de interior espaçoso e possibilidade de trafegar dentro e fora da cidade.
-          </p>
-        </article>
-
-        <article>
-          <h1>Mustang</h1>
-
-          <p>
-            O Ford Mustang é um automóvel desportivo produzido pela Ford Motor Company. O carro foi apresentado ao público em 17 de abril de 1964 durante a New York World's Fair. O Mustang, apesar de ter sofrido grandes alterações ao longo dos anos é a mais antiga linha de automóveis da Ford.
-          </p>
-        </article>
-      </main>
+      <GlobalStyle />
     </>
   )
 }
 
 export default App
-
-
